@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCGAN Face Generator</title>
+
+    <style>
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            background:#eef2ff;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .container{
+            background:white;
+            padding:30px;
+            border-radius:16px;
+            width:420px;
+            text-align:center;
+            box-shadow:0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        h1{
+            color:#4338ca;
+            margin-bottom:10px;
+        }
+
+        p{
+            color:#555;
+        }
+
+        button{
+            background:#4338ca;
+            color:white;
+            border:none;
+            padding:12px 24px;
+            border-radius:8px;
+            font-size:16px;
+            cursor:pointer;
+            margin-top:20px;
+        }
+
+        button:hover{
+            background:#312e81;
+        }
+
+        img{
+            margin-top:20px;
+            width:256px;
+            border-radius:10px;
+            border:1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>DCGAN Face Generator</h1>
+        <p>Generate a synthetic celebrity face using a trained DCGAN model.</p>
+
+        <form action="/generate" method="GET">
+            <button type="submit">Generate Face</button>
+        </form>
+
+        {% if generated %}
+            <img src="{{ url_for('static', filename='generated.png') }}" alt="Generated Face">
+        {% endif %}
+    </div>
+</body>
+</html>

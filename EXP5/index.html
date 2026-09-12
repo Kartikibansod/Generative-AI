@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>VAE MNIST Digit Generator</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <div class="card">
+
+
+        <h1>VAE Digit Generator</h1>
+
+
+        <p class="subtitle">
+
+            Select a number and generate a new
+            MNIST-style handwritten image using the
+            trained VAE Decoder.
+
+        </p>
+
+
+        <!-- Digit Selection -->
+
+        <div class="section">
+
+            <h2>Select a Digit</h2>
+
+
+            <div class="digit-grid">
+
+                <button class="digit-btn active" data-digit="0">
+                    0
+                </button>
+
+                <button class="digit-btn" data-digit="1">
+                    1
+                </button>
+
+                <button class="digit-btn" data-digit="2">
+                    2
+                </button>
+
+                <button class="digit-btn" data-digit="3">
+                    3
+                </button>
+
+                <button class="digit-btn" data-digit="4">
+                    4
+                </button>
+
+                <button class="digit-btn" data-digit="5">
+                    5
+                </button>
+
+                <button class="digit-btn" data-digit="6">
+                    6
+                </button>
+
+                <button class="digit-btn" data-digit="7">
+                    7
+                </button>
+
+                <button class="digit-btn" data-digit="8">
+                    8
+                </button>
+
+                <button class="digit-btn" data-digit="9">
+                    9
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Selected Digit -->
+
+        <div class="selected-info">
+
+            Selected Number:
+
+            <span id="selectedDigit">
+                0
+            </span>
+
+        </div>
+
+
+        <!-- Generate Button -->
+
+        <button id="generateBtn">
+
+            Generate Image
+
+        </button>
+
+
+        <!-- Loading -->
+
+        <div id="loading"
+             class="loading hidden">
+
+            Generating image...
+
+        </div>
+
+
+        <!-- Generated Image -->
+
+        <div class="image-section">
+
+
+            <h2>Generated Image</h2>
+
+
+            <div class="image-box">
+
+
+                <img
+                    id="generatedImage"
+                    src=""
+                    alt="Generated digit"
+                >
+
+
+                <p id="placeholder">
+
+                    Your generated image will appear here
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+let selectedDigit = 0;
+
+
+const digitButtons =
+    document.querySelectorAll(".digit-btn");
+
+
+const selectedDigitText =
+    document.getElementById("selectedDigit");
+
+
+const generateBtn =
+    document.getElementById("generateBtn");
+
+
+const generatedImage =
+    document.getElementById("generatedImage");
+
+
+const placeholder =
+    document.getElementById("placeholder");
+
+
+const loading =
+    document.getElementById("loading");
+
+
+
+/* ------------------------------------------
+   Select Digit
+------------------------------------------ */
+
+digitButtons.forEach(function(button) {
+
+    button.addEventListener("click", function() {
+
+
+        // Remove active class
+        digitButtons.forEach(function(btn) {
+
+            btn.classList.remove("active");
+
+        });
+
+
+        // Add active class
+        this.classList.add("active");
+
+
+        // Store selected digit
+        selectedDigit =
+            parseInt(this.dataset.digit);
+
+
+        // Display selected digit
+        selectedDigitText.textContent =
+            selectedDigit;
+
+    });
+
+});
+
+
+
+/* ------------------------------------------
+   Generate Image
+------------------------------------------ */
+
+generateBtn.addEventListener(
+    "click",
+    async function() {
+
+
+        loading.classList.remove("hidden");
+
+
+        generateBtn.disabled = true;
+
+
+        try {
+
+
+            const response =
+                await fetch("/generate", {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        digit: selectedDigit
+
+                    })
+
+                });
+
+
+            const data =
+                await response.json();
+
+
+            if (data.success) {
+
+
+                generatedImage.src =
+                    "data:image/png;base64,"
+                    + data.image;
+
+
+                generatedImage.style.display =
+                    "block";
+
+
+                placeholder.style.display =
+                    "none";
+
+
+            }
+
+            else {
+
+                alert(
+                    "Error: "
+                    + data.error
+                );
+
+            }
+
+
+        }
+
+        catch (error) {
+
+            alert(
+                "Something went wrong: "
+                + error
+            );
+
+        }
+
+
+        finally {
+
+
+            loading.classList.add(
+                "hidden"
+            );
+
+
+            generateBtn.disabled =
+                false;
+
+
+        }
+
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>

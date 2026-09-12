@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MNIST Digit Generator</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#2563EB,#7C3AED);
+}
+
+.card{
+background:white;
+width:430px;
+padding:35px;
+border-radius:22px;
+text-align:center;
+box-shadow:0 20px 45px rgba(0,0,0,.25);
+}
+
+h1{
+font-size:42px;
+color:#1D4ED8;
+margin-bottom:10px;
+}
+
+.subtitle{
+color:#666;
+margin-bottom:28px;
+font-size:20px;
+}
+
+select{
+width:100%;
+padding:14px;
+font-size:18px;
+border-radius:12px;
+border:1px solid #CCC;
+margin-bottom:22px;
+}
+
+button{
+width:100%;
+padding:15px;
+font-size:18px;
+border:none;
+border-radius:12px;
+background:#1D4ED8;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+background:#1E40AF;
+}
+
+#loading{
+margin-top:15px;
+display:none;
+color:#2563EB;
+font-weight:bold;
+}
+
+#output{
+margin-top:28px;
+display:none;
+}
+
+#output img{
+width:336px;
+height:336px;
+background:black;
+border-radius:12px;
+border:3px solid #2563EB;
+image-rendering:pixelated;
+image-rendering:crisp-edges;
+}
+
+#digitText{
+margin-top:15px;
+font-size:22px;
+font-weight:bold;
+color:#1D4ED8;
+}
+
+#error{
+margin-top:15px;
+color:red;
+font-weight:bold;
+}
+
+.footer{
+margin-top:20px;
+font-size:14px;
+color:#777;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>🧠 MNIST Digit Generator</h1>
+
+<p class="subtitle">Variational Autoencoder (VAE)</p>
+
+<select id="digit">
+
+<option value="0">Digit 0</option>
+<option value="1">Digit 1</option>
+<option value="2">Digit 2</option>
+<option value="3">Digit 3</option>
+<option value="4">Digit 4</option>
+<option value="5">Digit 5</option>
+<option value="6">Digit 6</option>
+<option value="7">Digit 7</option>
+<option value="8">Digit 8</option>
+<option value="9">Digit 9</option>
+
+</select>
+
+<button onclick="generateDigit()">Generate Digit</button>
+
+<div id="loading">Generating...</div>
+
+<div id="error"></div>
+
+<div id="output">
+
+<img id="generatedImage">
+
+<div id="digitText"></div>
+
+</div>
+
+<p class="footer">TensorFlow • Flask • MNIST VAE</p>
+
+</div>
+
+<script>
+
+async function generateDigit(){
+
+document.getElementById("loading").style.display="block";
+document.getElementById("output").style.display="none";
+document.getElementById("error").innerHTML="";
+
+const digit=document.getElementById("digit").value;
+
+try{
+
+const response=await fetch("/generate",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+digit:digit
+})
+});
+
+const data=await response.json();
+
+document.getElementById("loading").style.display="none";
+
+if(data.success){
+
+document.getElementById("generatedImage").src=
+"data:image/png;base64,"+data.image;
+
+document.getElementById("digitText").innerHTML=
+"Selected Digit : "+data.selected_digit;
+
+document.getElementById("output").style.display="block";
+
+}else{
+
+document.getElementById("error").innerHTML=data.error;
+
+}
+
+}catch(err){
+
+document.getElementById("loading").style.display="none";
+document.getElementById("error").innerHTML="Unable to connect to Flask server.";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
