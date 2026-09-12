@@ -1,3 +1,39 @@
 __pycache__/
 .ipynb_checkpoints/
 .DS_Store
+
+# Python virtual environment
+venv/
+ENV/
+env/
+.venv/
+env.bak/
+.virtualenv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Large binary files commonly found in ML/DL projects
+*.dylib
+*.so
+*.dll
+*.exe
